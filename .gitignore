@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+*.env
+*.DS_Store
+
+# Django
+db.sqlite3
+*.db
+*.mo
+*.pot
+media/
+media-files/
+
+# Virtual environments
+venv/
+.env
+.env.*
+
+# Editor folders
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Static files
+staticfiles/
+static_root/
+static/
+
+# Migrations
+*/migrations/
+!*/migrations/__init__.py
+
+# OS files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Others
+coverage.xml
+htmlcov/
+*.bak

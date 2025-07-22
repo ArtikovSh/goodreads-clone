@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Book Detail Page{% endblock %}
+
+{% block content %}
+    <div class="row mb-4">
+        <div class="col-2">
+            <img class="cover-pic" alt="Cover Image" src="{{ book.cover_picture.url }}">
+        </div>
+
+        <div class="col-6 ms-3">
+                <h3>{{ book.title }}</h3>
+
+                <span class="fst-italic">
+                    Authored by
+                    {% for book_author in book.bookauthor_set.all %}
+                        {% if forloop.last %}
+                            {{ book_author.author.full_name }}
+                        {% else %}
+                            {{ book_author.author.full_name }},
+                        {% endif %}
+                    {% endfor %}
+                </span>
+
+                <p>
+                    {{ book.description }}
+                </p>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-6">
+            <form method="post" action="{% url 'books:reviews' book.id %}">
+                {% csrf_token %}
+
+                {{ review_form.comment|as_crispy_field }}
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Your Rating:</label>
+                    <div id="star-rating" class="mb-2">
+                        {% for i in "12345" %}
+                            <i class="fa-star far text-warning star" data-value="{{ forloop.counter }}"></i>
+                        {% endfor %}
+                    </div>
+                    {{ review_form.stars_given }}
+                </div>
+
+                <button class="btn btn-success">Add review</button>
+            </form>
+        </div>
+    </div>
+
+
+    {% if book.bookreview_set.exists %}
+
+        <h4>Reviews</h4> <hr class="border border-success border-4 opacity-50">
+
+        {% for review in book.bookreview_set.all %}
+            <div class="row mb-3">
+                <div class="col-1 me-2 d-flex flex-column align-items-center">
+                    <img class="small-profile-pic" src="{{ review.user.profile_picture.url }}">
+                    <p class="mt-2">
+                        <b>{{ review.user.username }}</b>
+                    </p>
+                </div>
+                <div class="col-7 ">
+                    {% for i in "12345" %}
+                        {% if forloop.counter <= review.stars_given %}
+                            <i class="fas fa-star text-warning"></i>
+                        {% else %}
+                            <i class="far fa-star text-warning"></i>
+                        {% endif %}
+                    {% endfor %}
+
+                    <span class="fw-lighter">{{ review.created_at }}</span>
+                    {% if review.user == request.user %}
+                        <a href="{% url 'books:edit-review' book.id review.id %}" class="btn btn-outline-primary btn-sm"><i class="bi bi-pen"></i> Update</a>
+                        <a href="{% url 'books:confirm-delete-review' book.id review.id %}" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i> Delete</a>
+                    {% endif %}
+                    <p class="mt-2 font-monospace">{{ review.comment }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <script src="{% static 'js/review_comment.js' %}"></script>
+
+{% endblock %}
